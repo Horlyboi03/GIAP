@@ -1,0 +1,57 @@
+# Environment variables
+.env
+.env.local
+.env.production
+backend/.env
+backend/.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+backend/venv/
+backend/env/
+
+# Node
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+backend/instance/*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Debug files
+.dbg/
+*.log
+
+# Test files
+backend/test_gmail.py
