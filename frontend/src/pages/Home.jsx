@@ -66,9 +66,9 @@ export default function Home() {
   const [contactStatus, setContactStatus] = useState('')
 
   useEffect(() => {
-    api.get('/grants/categories').then(res => setCategories(res.data))
-    api.get('/grants/faqs').then(res => setFaqs(res.data))
-    api.get('/grants/testimonials').then(res => setTestimonials(res.data))
+    api.get('/grants/categories').then(res => setCategories(res.data)).catch(err => console.warn('Failed to load categories:', err))
+    api.get('/grants/faqs').then(res => setFaqs(res.data)).catch(err => console.warn('Failed to load FAQs:', err))
+    api.get('/grants/testimonials').then(res => setTestimonials(res.data)).catch(err => console.warn('Failed to load testimonials:', err))
   }, [])
 
   useEffect(() => {
