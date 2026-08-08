@@ -96,20 +96,26 @@ export default function Home() {
   }, [testimonials])
 
   useEffect(() => {
-    // Don't show cookie banner if user is logged in
+    // Check if cookie consent has been saved
+    const savedConsent = localStorage.getItem('giap_cookie_consent')
+    
     if (user) {
-      console.log('User is logged in: Cookie banner will not show')
-      setCookieConsent('logged_in') // Set to any value to hide banner
+      // User is logged in - don't show banner
+      setCookieConsent('logged_in')
+    } else if (savedConsent) {
+      // User has already made a choice - don't show banner
+      setCookieConsent(savedConsent)
     } else {
-      // Always show banner for non-logged-in users
+      // First visit and not logged in - show banner
       setCookieConsent(null)
     }
-  }, [user]) // Add user as dependency to re-run when auth status changes
+  }, [user])
 
   const applyPath = '/register'
 
   const handleCookieConsent = (choice) => {
-    // Don't save to localStorage - just hide banner for current session
+    // Save choice to localStorage so it persists
+    localStorage.setItem('giap_cookie_consent', choice)
     setCookieConsent(choice)
   }
 
