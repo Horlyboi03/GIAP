@@ -135,7 +135,8 @@ def create_app(config_class=Config):
             "https://profound-belekoy-6ce8db.netlify.app"
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
     }})
     
     # JWT error handlers
