@@ -255,11 +255,12 @@ def send_application_status_email(recipient, applicant_name, category_name, stat
 
     if status == 'approved':
         subject = 'GIAP Application Approved'
+        ref_line = f"Application ID: {application_reference}\n" if application_reference else ""
         body = (
             f'Hello {applicant_name},\n\n'
             f'We are pleased to let you know that your GIAP application for {category_name} has been approved.\n\n'
             f'Application Status: {normalized_status}\n'
-            f'{f"Application ID: {application_reference}\\n" if application_reference else ""}'
+            f'{ref_line}'
             '\n'
             'Your submitted details have been reviewed and approved by our team. '
             'Please keep an eye on this email address for any next-step instructions from GIAP.\n\n'
@@ -268,11 +269,12 @@ def send_application_status_email(recipient, applicant_name, category_name, stat
         )
     elif status == 'rejected':
         subject = 'GIAP Application Declined'
+        ref_line = f"Application ID: {application_reference}\n" if application_reference else ""
         body = (
             f'Hello {applicant_name},\n\n'
             f'This is to let you know that your GIAP application for {category_name} was not approved at this time.\n\n'
             f'Application Status: {normalized_status}\n'
-            f'{f"Application ID: {application_reference}\\n" if application_reference else ""}'
+            f'{ref_line}'
             '\n'
             'Please log in to your dashboard to review the latest update. '
             'If you need assistance, contact giapteam@outlook.com.\n\n'
