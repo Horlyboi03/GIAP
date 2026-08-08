@@ -6,7 +6,20 @@ load_dotenv()
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or f'sqlite:///{os.path.join(BASE_DIR, "instance", "giap.db")}'
+    
+    # Database configuration
+    # On Render or production, use DATABASE_URL (PostgreSQL)
+    # Locally, use SQLite
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        # Fix postgres:// to postgresql:// if needed (some platforms use old format)
+        if database_url.startswith('postgres://'):
+            database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        SQLALCHEMY_DATABASE_URI = database_url
+    else:
+        # Local development - use SQLite
+        SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(BASE_DIR, "instance", "giap.db")}'
+    
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-key-change-in-production'
     

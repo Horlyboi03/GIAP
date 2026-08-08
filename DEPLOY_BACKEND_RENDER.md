@@ -42,20 +42,41 @@ Fill in these settings:
 
 ### Build Settings:
 - **Build Command**: `pip install -r requirements.txt`
-- **Start Command**: `gunicorn app:app --bind 0.0.0.0:$PORT`
+- **Start Command**: `gunicorn wsgi:app --bind 0.0.0.0:$PORT`
 
 ### Instance Type:
 - Select **"Free"** (750 hours/month)
 
 ---
 
-## Step 4: Add Environment Variables
+## Step 4: Create PostgreSQL Database
+
+Before configuring the web service, create a PostgreSQL database:
+
+1. From Dashboard, click **"New +"** button
+2. Select **"PostgreSQL"**
+3. Configure database:
+   - **Name**: `giap-database`
+   - **Database**: `giap_db`
+   - **User**: `giap_user` (or leave default)
+   - **Region**: Same as your web service
+   - **PostgreSQL Version**: 15 or latest
+   - **Plan**: **Free** (256MB RAM, 1GB storage)
+4. Click **"Create Database"**
+5. Wait for database to be created
+6. **Copy the Internal Database URL** - you'll need this!
+
+---
+
+## Step 5: Add Environment Variables
 
 Scroll down to **"Environment Variables"** section and add these:
 
 Click **"Add Environment Variable"** for each:
 
 ```
+DATABASE_URL = [paste the Internal Database URL from Step 4]
+
 SECRET_KEY = your-production-secret-key-change-this-12345
 JWT_SECRET_KEY = your-jwt-production-secret-change-this-67890
 
@@ -72,12 +93,13 @@ FRONTEND_URL = https://profound-belekoy-6ce8db.netlify.app
 ```
 
 **IMPORTANT**: 
+- Replace `DATABASE_URL` with the Internal Database URL you copied in Step 4
 - Replace `FRONTEND_URL` with your actual Netlify URL
 - Change the SECRET_KEY values to something secure
 
 ---
 
-## Step 5: Create Web Service
+## Step 6: Create Web Service
 
 1. Click **"Create Web Service"** button at the bottom
 2. Render will start building your backend
@@ -86,7 +108,7 @@ FRONTEND_URL = https://profound-belekoy-6ce8db.netlify.app
 
 ---
 
-## Step 6: Get Your Backend URL
+## Step 7: Get Your Backend URL
 
 Once deployed (status shows "Live"):
 
@@ -96,7 +118,7 @@ Once deployed (status shows "Live"):
 
 ---
 
-## Step 7: Test Your Backend
+## Step 8: Test Your Backend
 
 Visit: `https://your-service-name.onrender.com/api/grants/categories`
 
@@ -104,7 +126,7 @@ You should see a JSON response with grant categories.
 
 ---
 
-## Step 8: Update Frontend to Use Backend
+## Step 9: Update Frontend to Use Backend
 
 ### Option A: Update Netlify Environment Variable (Recommended)
 
@@ -133,7 +155,7 @@ Push to GitHub - Netlify auto-redeploys.
 
 ---
 
-## Step 9: Update Backend CORS
+## Step 10: Update Backend CORS
 
 Your backend needs to allow requests from Netlify.
 
@@ -156,7 +178,7 @@ Then push to GitHub - Render will auto-redeploy.
 
 ---
 
-## Step 10: Test Everything
+## Step 11: Test Everything
 
 1. Visit your Netlify site: https://profound-belekoy-6ce8db.netlify.app
 2. Try to register a new account
@@ -180,9 +202,10 @@ Use a service like **UptimeRobot** or **cron-job.org** to ping your API every 14
 - Frequency: Every 14 minutes
 
 ### Database:
-- Current setup uses SQLite (file-based)
-- ⚠️ Data will reset when service restarts
-- For production, consider adding PostgreSQL database
+- ✅ Using PostgreSQL (persistent storage)
+- Data persists across restarts
+- Free tier: 256MB RAM, 1GB storage
+- Backup recommended for production
 
 ---
 
@@ -195,8 +218,9 @@ Use a service like **UptimeRobot** or **cron-job.org** to ping your API every 14
 
 ### Issue: "Application Error" or 502
 - Check the logs in Render dashboard
-- Verify start command: `gunicorn app:app --bind 0.0.0.0:$PORT`
+- Verify start command: `gunicorn wsgi:app --bind 0.0.0.0:$PORT`
 - Make sure all environment variables are set
+- Verify DATABASE_URL is set correctly
 
 ### Issue: CORS Errors
 - Add your Netlify URL to CORS in `backend/app/__init__.py`
