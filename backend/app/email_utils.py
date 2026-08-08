@@ -282,11 +282,12 @@ def send_application_status_email(recipient, applicant_name, category_name, stat
         )
     else:
         subject = f'GIAP Application {normalized_status}'
+        ref_line = f"Application ID: {application_reference}\n" if application_reference else ""
         body = (
             f'Hello {applicant_name},\n\n'
             f'There is an update on your GIAP application for {category_name}.\n\n'
             f'Current Status: {normalized_status}\n'
-            f'{f"Application ID: {application_reference}\\n" if application_reference else ""}'
+            f'{ref_line}'
             '\n'
             'Please log in to your dashboard to view the latest details.\n\n'
             'Thank you for using GIAP.'
