@@ -91,22 +91,15 @@ def register():
         
         access_token = create_user_token(user)
 
-        # #region debug-point C:registration-email-callsite
-        _report_debug_event(
-            'pre-fix',
-            'C',
-            'backend/app/routes/auth.py:register',
-            '[DEBUG] Registration flow is calling welcome email helper',
-            {
-                'user_id': user.id,
-                'email': user.email,
-            },
-        )
-        # #endregion
-        send_registration_welcome_email(
-            user.email,
-            applicant.first_name
-        )
+        # Send welcome email in background (don't wait for it)
+        try:
+            send_registration_welcome_email(
+                user.email,
+                applicant.first_name
+            )
+        except Exception as email_error:
+            # Log email error but don't fail registration
+            print(f"WARNING: Failed to send welcome email: {str(email_error)}")
         
         print(f"DEBUG: Token generated successfully")
         
