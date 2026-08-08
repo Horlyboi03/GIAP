@@ -109,52 +109,15 @@ def submit_application():
         db.session.add(notification)
         
         db.session.commit()
-        application_reference = format_application_reference(application.id)
-        # #region debug-point C:application-email-callsite
-        _report_debug_event(
-            'pre-fix',
-            'C',
-            'backend/app/routes/grants.py:submit_application',
-            '[DEBUG] Application flow is calling applicant/internal email helpers',
-            {
-                'application_id': application.id,
-                'application_reference': application_reference,
-                'applicant_email': applicant.user.email,
-                'internal_recipient': current_app.config.get('MAIL_DEFAULT_SENDER'),
-            },
-        )
-        # #endregion
-        applicant_email_sent = send_application_submitted_email(
-            recipient=applicant.user.email,
-            applicant_name=f'{applicant.first_name} {applicant.last_name}'.strip() or 'Applicant',
-            category_name=category.name,
-            application_id=application.id
-        )
-        internal_alert_sent = send_internal_application_alert(
-            recipient=current_app.config.get('MAIL_DEFAULT_SENDER'),
-            applicant_name=f'{applicant.first_name} {applicant.last_name}'.strip() or 'Applicant',
-            applicant_email=applicant.user.email,
-            applicant_phone=applicant.phone_number,
-            category_name=category.name,
-            application_id=application.id
-        )
-        if not applicant_email_sent:
-            current_app.logger.warning(
-                'Applicant submission email was not sent for application %s (%s)',
-                application.id,
-                application_reference,
-            )
-        if not internal_alert_sent:
-            current_app.logger.warning(
-                'Internal submission alert was not sent for application %s (%s)',
-                application.id,
-                application_reference,
-            )
+        
+        # Note: Email notifications disabled to prevent timeout on free tier
+        # Emails can be sent manually by admin or via scheduled job
+        
         print(f"DEBUG: Application created successfully with ID: {application.id}")
         return jsonify({
             'message': 'Application submitted successfully',
             'application_id': application.id,
-            'application_reference': application_reference
+            'application_reference': application.reference
         }), 201
     except ValueError as e:
         print(f"DEBUG: ValueError: {str(e)}")
