@@ -90,18 +90,11 @@ def register():
         print(f"DEBUG: User created successfully with ID: {user.id}")
         
         access_token = create_user_token(user)
-
-        # Send welcome email in background (don't wait for it)
-        try:
-            send_registration_welcome_email(
-                user.email,
-                applicant.first_name
-            )
-        except Exception as email_error:
-            # Log email error but don't fail registration
-            print(f"WARNING: Failed to send welcome email: {str(email_error)}")
         
         print(f"DEBUG: Token generated successfully")
+        
+        # Note: Welcome email disabled to prevent timeout on free tier
+        # Email will be sent when user submits their first application
         
         return jsonify({
             'access_token': access_token,
