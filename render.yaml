@@ -3,7 +3,7 @@ services:
     name: giap-backend
     runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python init_db.py
     startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
     pythonVersion: 3.11.9
     envVars:
