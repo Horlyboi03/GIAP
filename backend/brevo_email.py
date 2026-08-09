@@ -46,7 +46,7 @@ def send_welcome_email(recipient, first_name):
     <html>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h2>Welcome to GIAP, {first_name}!</h2>
-        <p>Thank you for registering with the Grant Impact Assistance Program (GIAP).</p>
+        <p>Thank you for registering with the Global International Assistance Program (GIAP).</p>
         <p>We're excited to have you as part of our community dedicated to making positive change through grant funding.</p>
         <h3>What's Next?</h3>
         <ul>

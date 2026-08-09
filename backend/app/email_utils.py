@@ -43,14 +43,16 @@ def _report_debug_event(run_id, hypothesis_id, location, msg, data=None):
 
 
 def generate_application_reference(length=8):
+    """Generate unique application reference like GIAP-A1B2C3D4"""
     alphabet = string.ascii_uppercase + string.digits
     while True:
-        reference = ''.join(secrets.choice(alphabet) for _ in range(length))
+        reference = 'GIAP-' + ''.join(secrets.choice(alphabet) for _ in range(length))
         if not GrantApplication.query.filter_by(reference=reference).first():
             return reference
 
 
 def format_application_reference(application_id):
+    """Format application reference - returns existing reference or generates new format"""
     if application_id is None:
         return None
 
@@ -61,7 +63,8 @@ def format_application_reference(application_id):
     if application and getattr(application, 'reference', None):
         return application.reference
 
-    return f'GA{int(application_id):05d}'
+    # Fallback format for old applications without reference
+    return f'GIAP-{int(application_id):08d}'
 
 
 def _send_email(recipient, subject, body, html_body=None):
