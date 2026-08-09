@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app import db
 from app.models import Admin, User, Applicant, GrantApplication, Notification
-from app.email_utils import send_application_status_email, format_application_reference, _report_debug_event
+from app.email_utils import format_application_reference
+from send_email_async import send_status_email_async
 from datetime import datetime
 
 bp = Blueprint('admin', __name__, url_prefix='/api/admin')
@@ -131,7 +132,14 @@ def update_application_status(id):
     
     db.session.commit()
 
-    # Note: Email notifications disabled to prevent timeout on free tier
-    # Status update is saved successfully, emails can be sent via alternate method
+    # Send status email asynchronously (won't block response)
+    if status in {'approved', 'rejected'}:
+        send_status_email_async(
+            recipient=application.applicant.user.email,
+            applicant_name=f'{application.applicant.first_name} {application.applicant.last_name}'.strip() or 'Applicant',
+            category_name=application.category.name if application.category else 'your grant application',
+            status=status,
+            application_id=application.id
+        )
 
     return jsonify({'message': 'Application status updated successfully'})

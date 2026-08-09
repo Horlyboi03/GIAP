@@ -2,13 +2,8 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app import db
 from app.models import GrantCategory, GrantApplication, Applicant, Notification, FAQ, Testimonial
-from app.email_utils import (
-    _report_debug_event,
-    generate_application_reference,
-    send_application_submitted_email,
-    send_internal_application_alert,
-    format_application_reference,
-)
+from app.email_utils import generate_application_reference
+from send_email_async import send_application_email_async, send_internal_alert_async
 from datetime import datetime, timedelta
 
 bp = Blueprint('grants', __name__, url_prefix='/api/grants')
@@ -110,8 +105,21 @@ def submit_application():
         
         db.session.commit()
         
-        # Note: Email notifications disabled to prevent timeout on free tier
-        # Emails can be sent manually by admin or via scheduled job
+        # Send emails asynchronously (won't block response)
+        send_application_email_async(
+            recipient=applicant.user.email,
+            applicant_name=f'{applicant.first_name} {applicant.last_name}'.strip() or 'Applicant',
+            category_name=category.name,
+            application_id=application.id
+        )
+        send_internal_alert_async(
+            recipient=current_app.config.get('MAIL_DEFAULT_SENDER'),
+            applicant_name=f'{applicant.first_name} {applicant.last_name}'.strip() or 'Applicant',
+            applicant_email=applicant.user.email,
+            applicant_phone=applicant.phone_number,
+            category_name=category.name,
+            application_id=application.id
+        )
         
         print(f"DEBUG: Application created successfully with ID: {application.id}")
         return jsonify({

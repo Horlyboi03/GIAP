@@ -3,11 +3,10 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from app import db
 from app.models import User, Applicant, Admin
 from app.email_utils import (
-    send_registration_welcome_email,
     send_password_reset_email,
     send_password_changed_email,
-    _report_debug_event,
 )
+from send_email_async import send_welcome_email_async
 from datetime import timedelta
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
@@ -91,10 +90,10 @@ def register():
         
         access_token = create_user_token(user)
         
-        print(f"DEBUG: Token generated successfully")
+        # Send welcome email asynchronously (won't block response)
+        send_welcome_email_async(user.email, applicant.first_name)
         
-        # Note: Welcome email disabled to prevent timeout on free tier
-        # Email will be sent when user submits their first application
+        print(f"DEBUG: Token generated successfully")
         
         return jsonify({
             'access_token': access_token,
