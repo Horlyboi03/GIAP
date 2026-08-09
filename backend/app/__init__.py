@@ -139,7 +139,9 @@ def create_app(config_class=Config):
     CORS(app, resources={r"/api/*": {
         "origins": [
             "http://localhost:5173",
-            "https://profound-belekoy-6ce8db.netlify.app"
+            "https://profound-belekoy-6ce8db.netlify.app",
+            "https://giapgrant.org",
+            "https://www.giapgrant.org"
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
