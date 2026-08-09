@@ -15,6 +15,11 @@ def send_brevo_email(recipient, subject, html_content, sender_name="GIAP Grant T
     """Send email using Brevo API"""
     sender_email = os.environ.get('MAIL_USERNAME', 'giapgrantteam@gmail.com')
     
+    # Debug logging
+    api_key = os.environ.get('BREVO_API_KEY', '')
+    print(f"[BREVO DEBUG] API Key configured: {bool(api_key)}, Length: {len(api_key) if api_key else 0}")
+    print(f"[BREVO DEBUG] Sending to: {recipient}, From: {sender_email}, Subject: {subject}")
+    
     send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
         to=[{"email": recipient}],
         sender={"name": sender_name, "email": sender_email},
@@ -24,10 +29,14 @@ def send_brevo_email(recipient, subject, html_content, sender_name="GIAP Grant T
     
     try:
         api_response = api_instance.send_transac_email(send_smtp_email)
-        print(f"✓ Brevo email sent successfully to {recipient}: {api_response}")
+        print(f"✓ [BREVO SUCCESS] Email sent to {recipient}: {api_response}")
         return True
     except ApiException as e:
-        print(f"✗ Failed to send Brevo email to {recipient}: {e}")
+        print(f"✗ [BREVO ERROR] Failed to send email to {recipient}")
+        print(f"✗ [BREVO ERROR] Status: {e.status if hasattr(e, 'status') else 'N/A'}")
+        print(f"✗ [BREVO ERROR] Reason: {e.reason if hasattr(e, 'reason') else 'N/A'}")
+        print(f"✗ [BREVO ERROR] Body: {e.body if hasattr(e, 'body') else 'N/A'}")
+        print(f"✗ [BREVO ERROR] Full error: {str(e)}")
         return False
 
 def send_welcome_email(recipient, first_name):
