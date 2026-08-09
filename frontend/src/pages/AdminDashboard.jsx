@@ -9,12 +9,10 @@ import api from '../services/api'
 // Get API base URL for constructing image URLs
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 const getImageUrl = (filename) => {
-  // If API_BASE_URL starts with http, use it directly
-  if (API_BASE_URL.startsWith('http')) {
-    return `${API_BASE_URL.replace('/api', '')}/api/documents/uploads/${filename}`
-  }
-  // Otherwise, construct full URL
-  return `https://giap-ivc4.onrender.com/api/documents/uploads/${filename}`
+  // Remove /api suffix if present to get base URL
+  const baseUrl = API_BASE_URL.replace('/api', '')
+  // Construct full image URL
+  return `${baseUrl}/api/documents/uploads/${filename}`
 }
 
 function InfoCard({ label, value }) {
