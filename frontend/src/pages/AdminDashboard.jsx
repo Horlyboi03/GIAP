@@ -6,6 +6,9 @@ import AuthButtonLoader from '../components/AuthButtonLoader'
 import Navbar from '../components/Navbar'
 import api from '../services/api'
 
+// Get API base URL for constructing image URLs
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+
 function InfoCard({ label, value }) {
   return (
     <div className="rounded-2xl bg-black p-4 text-white shadow-lg shadow-black/20">
@@ -240,7 +243,7 @@ export default function AdminDashboard() {
                   {selectedApplication.applicant.id_front_path && (
                     <div>
                       {(() => {
-                        const frontDocumentUrl = `/api/documents/uploads/${selectedApplication.applicant.id_front_path}`
+                        const frontDocumentUrl = `${API_BASE_URL.replace('/api', '')}/api/documents/uploads/${selectedApplication.applicant.id_front_path}`
                         return (
                           <>
                       <div className="mb-3 flex items-center justify-between gap-3">
@@ -274,7 +277,7 @@ export default function AdminDashboard() {
                   {selectedApplication.applicant.id_back_path && (
                     <div>
                       {(() => {
-                        const backDocumentUrl = `/api/documents/uploads/${selectedApplication.applicant.id_back_path}`
+                        const backDocumentUrl = `${API_BASE_URL.replace('/api', '')}/api/documents/uploads/${selectedApplication.applicant.id_back_path}`
                         return (
                           <>
                       <div className="mb-3 flex items-center justify-between gap-3">
