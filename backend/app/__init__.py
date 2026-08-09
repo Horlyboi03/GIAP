@@ -111,15 +111,22 @@ def ensure_grant_application_schema():
         db.session.execute(text('ALTER TABLE grant_application ADD COLUMN reference VARCHAR(20)'))
         db.session.commit()
 
-    applications_without_reference = GrantApplication.query.filter(
-        (GrantApplication.reference.is_(None)) | (GrantApplication.reference == '')
-    ).all()
+    # Update applications without reference or with old format
+    applications_to_update = []
+    all_applications = GrantApplication.query.all()
+    
+    for application in all_applications:
+        # Update if: no reference, empty reference, or old format (GIAP-000001 or GA00001)
+        if (not application.reference or 
+            application.reference == '' or
+            application.reference.startswith('GIAP-0') or 
+            application.reference.startswith('GA')):
+            application.reference = generate_application_reference()
+            applications_to_update.append(application)
 
-    for application in applications_without_reference:
-        application.reference = generate_application_reference()
-
-    if applications_without_reference:
+    if applications_to_update:
         db.session.commit()
+        print(f"Updated {len(applications_to_update)} application reference(s) to new format")
 
 def create_app(config_class=Config):
     app = Flask(__name__)
