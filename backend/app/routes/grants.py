@@ -107,12 +107,14 @@ def submit_application():
         
         # Send emails asynchronously (won't block response)
         send_application_email_async(
+            app=current_app._get_current_object(),
             recipient=applicant.user.email,
             applicant_name=f'{applicant.first_name} {applicant.last_name}'.strip() or 'Applicant',
             category_name=category.name,
             application_id=application.id
         )
         send_internal_alert_async(
+            app=current_app._get_current_object(),
             recipient=current_app.config.get('MAIL_DEFAULT_SENDER'),
             applicant_name=f'{applicant.first_name} {applicant.last_name}'.strip() or 'Applicant',
             applicant_email=applicant.user.email,

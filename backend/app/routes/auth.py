@@ -91,7 +91,7 @@ def register():
         access_token = create_user_token(user)
         
         # Send welcome email asynchronously (won't block response)
-        send_welcome_email_async(user.email, applicant.first_name)
+        send_welcome_email_async(current_app._get_current_object(), user.email, applicant.first_name)
         
         print(f"DEBUG: Token generated successfully")
         

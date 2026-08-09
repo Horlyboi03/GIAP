@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app import db
 from app.models import Admin, User, Applicant, GrantApplication, Notification
@@ -135,6 +135,7 @@ def update_application_status(id):
     # Send status email asynchronously (won't block response)
     if status in {'approved', 'rejected'}:
         send_status_email_async(
+            app=current_app._get_current_object(),
             recipient=application.applicant.user.email,
             applicant_name=f'{application.applicant.first_name} {application.applicant.last_name}'.strip() or 'Applicant',
             category_name=application.category.name if application.category else 'your grant application',
