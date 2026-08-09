@@ -131,26 +131,7 @@ def update_application_status(id):
     
     db.session.commit()
 
-    if status in {'approved', 'rejected'}:
-        # #region debug-point C:status-email-callsite
-        _report_debug_event(
-            'pre-fix',
-            'C',
-            'backend/app/routes/admin.py:update_application_status',
-            '[DEBUG] Admin status flow is calling application status email helper',
-            {
-                'application_id': application.id,
-                'status': status,
-                'recipient': application.applicant.user.email,
-            },
-        )
-        # #endregion
-        send_application_status_email(
-            recipient=application.applicant.user.email,
-            applicant_name=f'{application.applicant.first_name} {application.applicant.last_name}'.strip() or 'Applicant',
-            category_name=application.category.name if application.category else 'your grant application',
-            status=status,
-            application_id=application.id
-        )
+    # Note: Email notifications disabled to prevent timeout on free tier
+    # Status update is saved successfully, emails can be sent via alternate method
 
-    return jsonify({'message': 'Application status updated'})
+    return jsonify({'message': 'Application status updated successfully'})
