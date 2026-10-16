@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app import db
 from app.models import GrantCategory, GrantApplication, Applicant, Notification, FAQ, Testimonial
-from app.email_utils import generate_application_reference
+from app.email_utils import generate_application_reference, format_application_reference
 from send_email_async import send_application_email_async, send_internal_alert_async
 from datetime import datetime, timedelta
 

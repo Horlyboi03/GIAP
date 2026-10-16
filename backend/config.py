@@ -16,6 +16,12 @@ class Config:
         if database_url.startswith('postgres://'):
             database_url = database_url.replace('postgres://', 'postgresql://', 1)
         SQLALCHEMY_DATABASE_URI = database_url
+        # Don't let a slow/unreachable database hang startup indefinitely
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            'pool_pre_ping': True,
+            'pool_recycle': 300,
+            'connect_args': {'connect_timeout': 10},
+        }
     else:
         # Local development - use SQLite
         SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(BASE_DIR, "instance", "giap.db")}'

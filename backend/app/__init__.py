@@ -169,9 +169,24 @@ def create_app(config_class=Config):
     app.register_blueprint(documents.bp)
 
     with app.app_context():
-        db.create_all()
-        ensure_applicant_schema()
-        ensure_grant_application_schema()
-        bootstrap_default_data()
-    
+        try:
+            db.create_all()
+            ensure_applicant_schema()
+            ensure_grant_application_schema()
+            bootstrap_default_data()
+        except Exception as exc:
+            # Never let a database outage prevent the worker from starting.
+            # The service will boot and report the real error instead of failing
+            # silently, and endpoints recover once the database is reachable again.
+            try:
+                db.session.rollback()
+            except Exception:
+                pass
+            app.logger.error(
+                'Database initialization failed at startup: %s. '
+                'The app will start but database-backed endpoints may fail until '
+                'the database is reachable again.',
+                exc,
+            )
+
     return app
