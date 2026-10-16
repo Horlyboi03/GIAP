@@ -15,6 +15,10 @@ class Config:
         # Fix postgres:// to postgresql:// if needed (some platforms use old format)
         if database_url.startswith('postgres://'):
             database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        # Pin the driver explicitly: SQLAlchemy 2.1 resolves a bare "postgresql://"
+        # URL to psycopg (v3), which is not installed here. We ship psycopg2-binary.
+        if database_url.startswith('postgresql://'):
+            database_url = database_url.replace('postgresql://', 'postgresql+psycopg2://', 1)
         SQLALCHEMY_DATABASE_URI = database_url
         # Don't let a slow/unreachable database hang startup indefinitely
         SQLALCHEMY_ENGINE_OPTIONS = {
