@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Globe, Users, TrendingUp, Award, CheckCircle, ChevronRight, ArrowRight, Briefcase, BookOpen, Sprout, Users as UsersIcon, Building, GraduationCap, Mail, MapPin, Facebook, Instagram, MessageCircle, X } from 'lucide-react'
+import { Globe, Users, TrendingUp, Award, CheckCircle, ChevronRight, ArrowRight, Briefcase, BookOpen, Sprout, Users as UsersIcon, Building, GraduationCap, MapPin, Facebook, Instagram, MessageCircle, X } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import api from '../services/api'
@@ -472,9 +472,9 @@ export default function Home() {
                     <div>
                       <h5 className="font-semibold text-gray-900 text-lg">Mary George</h5>
                       <p className="text-gray-600 mb-2">Program Coordinator</p>
-                      <a href="mailto:maryygeorge193@gmail.com" className="text-primary-600 hover:text-primary-700 font-medium flex items-center space-x-2">
-                        <Mail className="w-4 h-4" />
-                        <span>maryygeorge193@gmail.com</span>
+                      <a href={`sms:${applyPhone}`} className="text-primary-600 hover:text-primary-700 font-medium flex items-center space-x-2">
+                        <MessageCircle className="w-4 h-4" />
+                        <span>{applyPhoneDisplay}</span>
                       </a>
                     </div>
                   </div>
@@ -482,11 +482,11 @@ export default function Home() {
 
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-6 h-6 text-primary-600" />
+                    <MessageCircle className="w-6 h-6 text-primary-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Email</h4>
-                    <p className="text-gray-600">{supportEmail}</p>
+                    <h4 className="font-semibold text-gray-900">Phone</h4>
+                    <a href={`sms:${applyPhone}`} className="text-gray-600 hover:text-primary-700 font-medium">{applyPhoneDisplay}</a>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
