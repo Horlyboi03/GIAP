@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Globe, Users, TrendingUp, Award, CheckCircle, ChevronRight, ArrowRight, Briefcase, BookOpen, Sprout, Users as UsersIcon, Building, GraduationCap, Mail, MapPin, Facebook, Instagram } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Globe, Users, TrendingUp, Award, CheckCircle, ChevronRight, ArrowRight, Briefcase, BookOpen, Sprout, Users as UsersIcon, Building, GraduationCap, Mail, MapPin, Facebook, Instagram, MessageCircle, X } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import api from '../services/api'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 function AnimatedCounter({ end, duration = 2000, suffix = '' }) {
@@ -31,6 +30,8 @@ function AnimatedCounter({ end, duration = 2000, suffix = '' }) {
 export default function Home() {
   const { user } = useAuth() // Get authentication status
   const supportEmail = 'maryygeorge193@gmail.com'
+  const applyPhone = '+15182484720'
+  const applyPhoneDisplay = '+1 (518) 248-4720'
   const socialLinks = [
     {
       name: 'Facebook',
@@ -64,6 +65,7 @@ export default function Home() {
     message: '',
   })
   const [contactStatus, setContactStatus] = useState('')
+  const [showApplyModal, setShowApplyModal] = useState(false)
 
   useEffect(() => {
     api.get('/grants/categories')
@@ -110,8 +112,6 @@ export default function Home() {
       setCookieConsent(null)
     }
   }, [user])
-
-  const applyPath = '/register'
 
   const handleCookieConsent = (choice) => {
     // Save choice to localStorage so it persists
@@ -167,9 +167,13 @@ export default function Home() {
               Providing life-changing funding opportunities to individuals, businesses, students, farmers, and organizations worldwide.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to={applyPath} className="bg-gradient-to-r from-gold-500 to-gold-400 text-primary-950 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl hover:shadow-gold-500/30 transition-all transform hover:scale-105">
+              <button
+                type="button"
+                onClick={() => setShowApplyModal(true)}
+                className="bg-gradient-to-r from-gold-500 to-gold-400 text-primary-950 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl hover:shadow-gold-500/30 transition-all transform hover:scale-105"
+              >
                 Apply Now
-              </Link>
+              </button>
               <a href="#about" className="border-2 border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all">
                 Learn More
               </a>
@@ -370,9 +374,13 @@ export default function Home() {
                   ${category.min_amount.toLocaleString()} - ${category.max_amount.toLocaleString()}
                 </div>
                 <p className="text-gray-300 mb-6">{category.description}</p>
-                <Link to={applyPath} className="inline-flex items-center text-white font-semibold hover:text-gold-400 transition-colors">
+                <button
+                  type="button"
+                  onClick={() => setShowApplyModal(true)}
+                  className="inline-flex items-center text-white font-semibold hover:text-gold-400 transition-colors"
+                >
                   Apply Now <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
+                </button>
               </motion.div>
             ))}
           </div>
@@ -586,6 +594,59 @@ export default function Home() {
       </section>
 
       <Footer />
+
+      <AnimatePresence>
+        {showApplyModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center px-4 py-8"
+          >
+            <div
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={() => setShowApplyModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.97 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="relative w-full max-w-md rounded-[28px] border border-white/10 bg-[#0b0b0b] p-6 text-center shadow-2xl shadow-black/50 sm:p-8"
+            >
+              <button
+                type="button"
+                onClick={() => setShowApplyModal(false)}
+                aria-label="Close"
+                className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-gold-500 to-gold-400">
+                <MessageCircle className="h-7 w-7 text-primary-950" />
+              </div>
+
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-400">Your Grant Agent</p>
+              <h3 className="mt-2 text-2xl font-bold text-white">Mary George</h3>
+              <p className="mt-1 text-sm text-white/60">Program Coordinator</p>
+
+              <p className="mt-5 text-sm leading-6 text-white/70">
+                Send a text message with your name and the grant you are applying for, and Mary George will assist you right away.
+              </p>
+
+              <a
+                href={`sms:${applyPhone}`}
+                className="mt-6 flex flex-col items-center justify-center gap-1 rounded-2xl border border-gold-400/40 bg-gold-400/10 px-5 py-5 transition-colors hover:bg-gold-400/20"
+              >
+                <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/70">Tap to send a text</span>
+                <span className="text-2xl font-bold tracking-wide text-white">{applyPhoneDisplay}</span>
+              </a>
+              <p className="mt-2 text-xs text-white/50">Opens your phone's text messaging app - not a call.</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {!cookieConsent && (
         <motion.div
